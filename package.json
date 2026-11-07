@@ -1,0 +1,29 @@
+{
+  "name": "cows-and-bulls",
+  "version": "1.0.0",
+  "description": "Task: [github.com/rolling-scopes-school/tasks/blob/master/fullstack-engineering/tasks/bulls-and-cows/README.md](https://github.com/rolling-scopes-school/tasks/blob/master/fullstack-engineering/tasks/bulls-and-cows/README.md)",
+  "homepage": "https://github.com/shcheslenak-a11y/cows-and-bulls#readme",
+  "bugs": {
+    "url": "https://github.com/shcheslenak-a11y/cows-and-bulls/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shcheslenak-a11y/cows-and-bulls.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "ts-jest": "^29.4.15",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2"
+  }
+}
