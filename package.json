@@ -12,16 +12,14 @@
   },
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
-  "main": "index.js",
+  "type": "module",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "format": "npx eslint . --ext .ts --fix",
-    "lint": "npx eslint . --ext .ts",
-    "prepare": "husky"
+    "lint": "npx eslint . --ext .ts"
   },
   "husky": {
     "hooks": {
@@ -36,12 +34,18 @@
     ]
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/jest": "^30.0.0",
-    "eslint": "^8.56.0",
+    "@types/seedrandom": "^3.0.8",
+    "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
+    "globals": "^17.14.0",
+    "jest": "^30.5.2",
+    "jiti": "^2.7.0",
     "lint-staged": "^17.6.0",
     "prettier": "3.2.5",
+    "seedrandom": "^3.0.5",
     "ts-jest": "^29.4.15",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
