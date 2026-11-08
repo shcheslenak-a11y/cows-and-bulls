@@ -20,13 +20,27 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "npx eslint . --ext .ts --fix",
-    "lint": "npx eslint . --ext .ts"
+    "lint": "npx eslint . --ext .ts",
+    "prepare": "husky"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "*.(ts|tsx)": [
+      "npm run format",
+      "git add"
+    ]
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
+    "lint-staged": "^17.6.0",
     "prettier": "3.2.5",
     "ts-jest": "^29.4.15",
     "ts-node": "^10.9.2",
