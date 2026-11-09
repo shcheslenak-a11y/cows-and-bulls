@@ -7,6 +7,8 @@ import {
 import { DOMManager } from "./index.js";
 import { Config } from "./config.js";
 
+let storage = window.localStorage;
+
 export class App {
   private dom: DOMManager;
   private config: Config;
@@ -66,6 +68,7 @@ export class App {
   }
 
   endgame() {
+    this.addLeader()
     this.dom.showWin()
     this.config.setStatus(false);
     this.secret = "";
@@ -79,6 +82,40 @@ export class App {
     this.isGameActive = false;
   }
 
+  getLeaders(){
+    return JSON.parse(storage.getItem("leaders") || '{"bin": {"2":[]},"oct": {"2":[], "3": [], "4":[], "5":[], "6": []},"dec": {"2":[], "3": [], "4":[], "5":[], "6": []},"hex": {"2":[], "3": [], "4":[], "5":[], "6": []}}')
+  }
+
+  addLeader(){
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    let yyyy = today.getFullYear();
+    let currentDate = `${dd}.${mm}.${yyyy}`
+    let leaders = this.getLeaders()
+    let leader = leaders[this.config.getBase()][String(this.config.getLength())]
+    let i=0;
+    for(; i<leader.length; i++){
+        if(this.config.getTurns() < Number(leader[i][0])){
+            console.log("<")
+            break
+        }
+        if(this.config.getTurns() == Number(leader[i][0]) && this.config.getTime() < Number(leader[i][1])){
+            console.log("=")
+            break
+        }
+    }
+    
+    leader.splice(i, 0, [`${this.config.getTurns()}`,`${this.config.getTime()}`, currentDate])
+    while (leader.length > 10) leader.pop();
+    storage.setItem("leaders",  JSON.stringify(leaders))
+  }
+
+  showLeaders() {
+    const leaders = this.getLeaders()
+    this.dom.showLeaders(leaders)
+  }
+
   assign() {
     const activeElements = this.dom.getActiveElements();
     activeElements.start?.addEventListener("click", () => {
@@ -87,6 +124,10 @@ export class App {
     });
     activeElements.input?.addEventListener("input", () => {
       this.guess();
+    });
+
+    activeElements.leaders?.addEventListener("click", () => {
+      this.showLeaders();
     });
   }
 }

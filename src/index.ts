@@ -46,8 +46,11 @@ function createLayout(): void {
   const base = createElement("div", { id: "base", class: "flex" });
   const length = createElement("div", { id: "length", class: "flex" });
   options.append(base, length);
+  const buttons = createElement("div", {class:'flex'})
   const startButton = createElement("div", { id: "start", class: "button" });
-  header.append(options, startButton);
+  const leaderButton = createElement("div", { id: "leaders", class: "button" }, 'Leaders');
+  buttons.append(startButton, leaderButton)
+  header.append(options, buttons);
 
   //main
   const main = createElement("main", { class: "flex-column hidden" });
@@ -121,6 +124,9 @@ export class DOMManager {
     createLayout();
     this.fillHeader();
     this.fillTable();
+    document.getElementById("close")!.addEventListener('click', ()=>{
+        this.close()
+    })
   }
 
   timer() {
@@ -174,9 +180,6 @@ export class DOMManager {
       this.config.getTurns(),
     );
     this.fillTable();
-    document.getElementById("close")!.addEventListener('click', ()=>{
-        this.close()
-    })
   }
 
   fillTable() {
@@ -184,7 +187,7 @@ export class DOMManager {
     table?.replaceChildren();
     table?.append(
       createRow(["#", "GUESS", "BULLS", "COWS"], true),
-      ...this.config.getHistory().map((el: Array<string>) => createRow(el)),
+      ...this.config.getHistory().map((el: Array<string>,index:number) => createRow([String(index + 1)].concat(el))),
     );
   }
 
@@ -201,7 +204,7 @@ export class DOMManager {
     const labelLength = createElement("label");
     labelLength.innerText = "Length: ";
     length!.append(labelLength, this.createOptions("length"));
-    for (const opt of document.getElementsByClassName("option"))
+    for (const opt of document.getElementsByTagName("header")[0]!.getElementsByClassName("option"))
       opt.addEventListener("click", () => {
         if (!opt.classList.contains("selected")) {
           for (const child of opt.parentNode!.children)
@@ -240,6 +243,7 @@ export class DOMManager {
     return {
       start: document.getElementById("start"),
       input: document.getElementById("guess"),
+      leaders: document.getElementById('leaders')
     };
   }
 
@@ -274,5 +278,101 @@ export class DOMManager {
         header: 'Congratulations',
         content: content
     })
+  }
+
+  showLeaders(leaders:{[key: string]: {[key: string]: Array<string>}}) {
+    const base = createElement('div', {id:"leader-base"})
+    const wrapperBase = createElement("div", { class: "option-wraper" });
+    wrapperBase.append(
+        createElement(
+          "div",
+          { "data-value": 'all', class: "option selected" },
+          'All'),
+      ...options['base']!.map((el: Array<string>) => {
+        return createElement(
+          "div",
+          { "data-value": el[0], class: "option" },
+          el[1] as string,
+        );
+      }),
+    );
+    base.append(
+        createElement("label", {}, "Base:"),
+        wrapperBase
+    )
+
+    const length = createElement('div', {id:"leader-length"})
+    const wrapperLength = createElement("div", { class: "option-wraper" });
+    wrapperLength.append(
+        createElement(
+          "div",
+          { "data-value": 'all', class: "option selected" },
+          'All'),
+      ...options['length']!.map((el: Array<string>) => {
+        return createElement(
+          "div",
+          { "data-value": el[0], class: "option" },
+          el[1] as string,
+        );
+      }),
+    );
+    length.append(
+        createElement("label", {}, "Length:"),
+        wrapperLength
+    )
+
+    const table = createElement('table', {id:"leader-table"})
+    const content = [base, length, table]
+    this.open({
+        header: "Leaders",
+        content: content
+    })
+    for (const opt of document.getElementById("modal-content")!.getElementsByClassName("option"))
+      opt.addEventListener("click", () => {
+        if (!opt.classList.contains("selected")) {
+          for (const child of opt.parentNode!.children)
+            child.classList.remove("selected");
+          opt.classList.add("selected");
+          this.fillLeaders(leaders)
+        }
+      });
+    this.fillLeaders(leaders)
+  }
+
+  fillLeaders(leaders:{[key: string]: {[key: string]: Array<string>}}) {
+    console.log(leaders)
+    const base = (document.getElementById('leader-base')?.getElementsByClassName('selected')[0] as HTMLElement).dataset.value
+    const length = (document.getElementById('leader-length')?.getElementsByClassName('selected')[0] as HTMLElement).dataset.value
+    const table = document.getElementById('leader-table')as HTMLElement
+    let leaderList:Array<Array<string>> = []
+    const baseFiltered = Object.entries(leaders).filter(([key, value]) => {
+        if (base != 'all')
+            return key == base
+        else
+            return true;
+    })
+    for (const [keyBase, value] of baseFiltered){
+        Object.entries(value).map(([keyLength, records]) => {
+            if (length != keyLength && length != 'all' )
+                return
+            (records || []).forEach(record => {
+                let shownRecord = [...record]
+                if(base == 'all') shownRecord.push(keyBase)
+                if(length == 'all') shownRecord.push(keyLength)
+                leaderList.push(shownRecord)
+            });
+            
+        })
+    }
+    leaderList.sort((a, b) => Number(a[0]) - Number(b[0]) || Number(a[1]) - Number(b[2]))
+    leaderList = leaderList.slice(0, 10)
+    table?.replaceChildren();
+    let header = ["#", "turns", "time", "date"];
+    if(base == 'all') header.push("Base")
+    if(length == 'all') header.push("Length")
+    table?.append(
+      createRow(header, true),
+      ...leaderList.map((el: Array<string>, index:number) => createRow([String(index + 1)].concat(el))),
+    );
   }
 }
