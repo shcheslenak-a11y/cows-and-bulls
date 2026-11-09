@@ -40,6 +40,16 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "noImplicitAny": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".husky" // Игнорировать папки сборки
+  ]
 }
