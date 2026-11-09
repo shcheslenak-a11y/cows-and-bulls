@@ -44,6 +44,11 @@ footer{
     
 }
 
+.option.selected {
+    background-color: gray;
+    color:white;
+}
+
 .button {
     border-radius: 10px;
     height: 20px;
@@ -61,4 +66,9 @@ footer{
 
 input {
     text-align: center;
+    height: 50px;
+}
+
+.hidden {
+    display: none !important;
 }
