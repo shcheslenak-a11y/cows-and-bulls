@@ -80,7 +80,15 @@ export function isValidGuess(
   length: number,
   base: string,
 ): boolean {
-  throw new Error("NotImplemented");
+  validateLength(length);
+  const validator = createDigitValidator(base);
+  const chars = guess.split("");
+  const unique = new Set(chars);
+  return (
+    guess.length == length &&
+    chars.filter((char: string) => !validator(char)).length == 0 &&
+    unique.size == length
+  );
 }
 
 const guessNumber = new Map();
