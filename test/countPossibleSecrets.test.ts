@@ -3,7 +3,6 @@ import { countPossibleSecrets } from "../src/game-logic";
 
 describe("countPossibleSecrets function", () => {
   test("should calculate numer of unique quesses", () => {
-
     expect(countPossibleSecrets(2, "bin")).toBe(2);
 
     expect(countPossibleSecrets(2, "oct")).toBe(56);
@@ -27,13 +26,13 @@ describe("countPossibleSecrets function", () => {
 
   test("fail on invalid length", () => {
     expect(() => countPossibleSecrets(1, "oct")).toThrow(
-      "Length must be betweem 2 and 6",
+      "Length must be a number between 2 and 6",
     );
     expect(() => countPossibleSecrets(7, "oct")).toThrow(
-      "Length must be betweem 2 and 6",
+      "Length must be a number between 2 and 6",
     );
     expect(() => countPossibleSecrets("dada", "oct")).toThrow(
-      "Length must be betweem 2 and 6",
+      "Length must be a number between 2 and 6",
     );
   });
 
