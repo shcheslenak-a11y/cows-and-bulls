@@ -65,7 +65,19 @@ export function generateSecret(
 }
 
 export function evaluateGuess(secret: string, guess: string): QuessReslut {
-  throw new Error("NotImplemented");
+  const guessChars = guess.split("");
+  const secretChars = secret.split("");
+  const res = secretChars.reduce(
+    (counter, char: string, index: number) => {
+      let { bulls, cows } = counter;
+      if (char == guessChars[index]) bulls += 1;
+      else if (guessChars.includes(char)) cows += 1;
+      return { cows: cows, bulls: bulls };
+    },
+    { cows: 0, bulls: 0 },
+  );
+  console.log(secret, guess, res);
+  return res;
 }
 
 export function createDigitValidator(base: string): (char: string) => boolean {
