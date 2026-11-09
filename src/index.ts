@@ -115,7 +115,17 @@ export class DOMManager {
     this.fillHeader();
     this.fillTable();
   }
-  
+
+  timer() {
+    if (this.config.getStatus()) {
+      document.getElementById("timer")!.innerText = String(
+        this.config.getTime(),
+      );
+      this.config.increaseTime();
+      setTimeout(() => this.timer(), 1000);
+    }
+  }
+
   gameStart() {
     const base =
       document.getElementById("base")?.getElementsByClassName("selected") || [];
@@ -135,7 +145,7 @@ export class DOMManager {
     this.config.setStatus(true);
     document.getElementsByTagName("main")[0]?.classList.remove("hidden");
     this.fillHeader();
-    console.log(this.config);
+    this.timer();
     return true;
   }
 
