@@ -69,7 +69,10 @@ export function evaluateGuess(secret: string, guess: string): QuessReslut {
 }
 
 export function createDigitValidator(base: string): (char: string) => boolean {
-  throw new Error("NotImplemented");
+  const baseData = getBase(base);
+  return function (char: string) {
+    return baseData.chars.includes(char.toUpperCase());
+  };
 }
 
 export function isValidGuess(
