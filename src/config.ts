@@ -7,7 +7,7 @@ export class Config {
   private history: Array<Array<string>>;
 
   constructor() {
-    this.base = '';
+    this.base = "";
     this.length = 0;
     this.isGameOn = false;
     this.turns = 0;
@@ -16,7 +16,7 @@ export class Config {
   }
 
   clear() {
-    this.base = '';
+    this.base = "";
     this.length = 0;
     this.isGameOn = false;
     this.turns = 0;

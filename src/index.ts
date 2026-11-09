@@ -104,7 +104,14 @@ function createLayout(): void {
   const githubImg = createElement("img", { src: "", alt: "Github" });
   github.append(githubImg);
   footer.append(course, "2026", github);
-  document.body.append(header, main, footer);
+
+  const modal = createElement('dialog', {id: 'modal'})
+  modal.append(
+    createElement('h2',{id: 'modal-header'}),
+    createElement('div', {id:'modal-content'}),
+    createElement('div', {id:'close', class:'button'}, 'Close')
+  )
+  document.body.append(header, main, footer, modal);
 }
 
 export class DOMManager {
@@ -143,6 +150,7 @@ export class DOMManager {
     (document.getElementById("guess") as HTMLInputElement).maxLength =
       this.config.getLength();
     this.config.setStatus(true);
+    this.fillTable()
     document.getElementsByTagName("main")[0]?.classList.remove("hidden");
     this.fillHeader();
     this.timer();
@@ -166,6 +174,9 @@ export class DOMManager {
       this.config.getTurns(),
     );
     this.fillTable();
+    document.getElementById("close")!.addEventListener('click', ()=>{
+        this.close()
+    })
   }
 
   fillTable() {
@@ -234,5 +245,34 @@ export class DOMManager {
 
   invalidGuess() {
     (document.getElementById("guess") as HTMLInputElement)!.value = "";
+  }
+
+  reset() {
+    document.getElementsByTagName("main")[0]?.classList.add("hidden");
+    document.getElementById("timer")!.innerText = "0";
+    this.fillHeader();
+    
+  }
+
+  open(data:{header: string, content: Array<HTMLElement>}){
+    document.getElementById("modal-header")!.innerText = data.header;
+    document.getElementById("modal-content")?.append(...data.content);
+    (document.getElementById('modal') as HTMLDialogElement).showModal()
+  }
+
+  close() {
+    document.getElementById("modal-content")?.replaceChildren();
+    (document.getElementById('modal') as HTMLDialogElement).close()
+  }
+
+  showWin(){
+    const content = [
+        createElement('label', {}, `Time: ${this.config.getTime()}`),
+        createElement('label', {}, `Turns: ${this.config.getTurns()}`)
+    ] 
+    this.open({
+        header: 'Congratulations',
+        content: content
+    })
   }
 }

@@ -11,6 +11,7 @@ export class App {
   private dom: DOMManager;
   private config: Config;
   private secret: string;
+  private isGameActive: boolean;
   private validator: (char: string) => boolean;
 
   constructor() {
@@ -19,17 +20,20 @@ export class App {
     this.secret = "";
     this.assign();
     this.validator = () => false;
+    this.isGameActive = false
   }
 
   startGame() {
     if (this.dom.gameStart()) {
-        const base = this.config.getBase();
-      this.secret = generateSecret(this.config.getLength(),base);
+        this.isGameActive = true
+      const base = this.config.getBase();
+      this.secret = generateSecret(this.config.getLength(), base);
       this.validator = createDigitValidator(base);
     }
   }
 
   guess() {
+    if (!this.config.getStatus()) return
     const guess = (this.dom.getGuess() || "").toUpperCase();
     const length = this.config.getLength();
     console.log("G", guess);
@@ -50,7 +54,11 @@ export class App {
       }
       this.config.increaseTurns();
       const result = evaluateGuess(this.secret, guess);
-      this.config.addHistory([guess, String(result.bulls), String(result.cows)]);
+      this.config.addHistory([
+        guess,
+        String(result.bulls),
+        String(result.cows),
+      ]);
       this.dom.show(result);
 
       if (result.bulls == length) this.endgame();
@@ -58,20 +66,23 @@ export class App {
   }
 
   endgame() {
+    this.dom.showWin()
     this.config.setStatus(false);
     this.secret = "";
   }
 
   resign() {
-    this.config.setStatus(false)
-    this.dom.fillHeader();
+    this.config.setStatus(false);
+    this.config.clear();
+    this.dom.reset();
     this.secret = "";
+    this.isGameActive = false;
   }
 
   assign() {
     const activeElements = this.dom.getActiveElements();
     activeElements.start?.addEventListener("click", () => {
-      if (this.config.getStatus()) this.resign();
+      if (this.isGameActive) this.resign();
       else this.startGame();
     });
     activeElements.input?.addEventListener("input", () => {
