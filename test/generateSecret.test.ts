@@ -4,37 +4,37 @@ import seedrandom from "seedrandom";
 
 describe("generateSecret function", () => {
   test("should generate secret", () => {
-    const rng = seedrandom("110");
+    let rng = seedrandom("110");
     //base bin(2)
     expect(generateSecret(2, "bin", rng)).toBe("10");
     //base oct(8)
-    expect(generateSecret(2, "oct", rng)).toBe("73");
-    expect(generateSecret(3, "oct", rng)).toBe("736");
-    expect(generateSecret(4, "oct", rng)).toBe("7360");
-    expect(generateSecret(5, "oct", rng)).toBe("73601");
-    expect(generateSecret(6, "oct", rng)).toBe("736014");
+    for (let i = 2; i < 7; i += 1) {
+      rng = seedrandom("110");
+      const quess = "730614";
+      expect(generateSecret(i, "oct", rng)).toBe(quess.slice(0, i));
+    }
     //base dec(10)
-    expect(generateSecret(2, "dec", rng)).toBe("94");
-    expect(generateSecret(3, "dec", rng)).toBe("941");
-    expect(generateSecret(4, "dec", rng)).toBe("9418");
-    expect(generateSecret(5, "dec", rng)).toBe("94187");
-    expect(generateSecret(6, "dec", rng)).toBe("941872");
+    for (let i = 2; i < 7; i += 1) {
+      rng = seedrandom("110");
+      const quess = "941872";
+      expect(generateSecret(i, "dec", rng)).toBe(quess.slice(0, i));
+    }
     //base hex(16)
-    expect(generateSecret(2, "hex", rng)).toBe("F7");
-    expect(generateSecret(3, "hex", rng)).toBe("F71");
-    expect(generateSecret(4, "hex", rng)).toBe("F71D");
-    expect(generateSecret(5, "hex", rng)).toBe("F71DC");
-    expect(generateSecret(6, "hex", rng)).toBe("F71DC3");
+    for (let i = 2; i < 7; i += 1) {
+      rng = seedrandom("110");
+      const quess = "F71DC3";
+      expect(generateSecret(i, "hex", rng)).toBe(quess.slice(0, i));
+    }
   });
   test("fail on invalid length", () => {
     expect(() => generateSecret(1, "oct")).toThrow(
-      "Length must be betweem 2 and 6",
+      "Length must be a number between 2 and 6",
     );
     expect(() => generateSecret(7, "oct")).toThrow(
-      "Length must be betweem 2 and 6",
+      "Length must be a number between 2 and 6",
     );
     expect(() => generateSecret("dada", "oct")).toThrow(
-      "Length must be betweem 2 and 6",
+      "Length must be a number between 2 and 6",
     );
   });
 
@@ -47,6 +47,14 @@ describe("generateSecret function", () => {
     );
     expect(() => generateSecret(4, 8)).toThrow(
       "Base must be 'bin', 'oct', 'dec' or 'hex'",
+    );
+  });
+  test("fail on lenght differnt from 2 with base 'bin", () => {
+    expect(() => generateSecret(4, "bin")).toThrow(
+      "Base 'bin' support only length 2",
+    );
+    expect(() => generateSecret(3, "bin")).toThrow(
+      "Base 'bin' support only length 2",
     );
   });
 });
