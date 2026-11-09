@@ -83,6 +83,19 @@ export function isValidGuess(
   throw new Error("NotImplemented");
 }
 
+const guessNumber = new Map();
+
 export function countPossibleSecrets(length: number, base: string): number {
-  throw new Error("NotImplemented");
+  const charNumber = getBase(base).numeric;
+  validateLength(length);
+  if (!guessNumber.has(charNumber)) guessNumber.set(charNumber, new Map());
+  const numbers = guessNumber.get(charNumber);
+  numbers.set(2, charNumber * (charNumber - 1));
+  function count(length: number, base: number): number {
+    if (!numbers.has(length)) {
+      numbers.set(length, (base - length + 1) * count(length - 1, base));
+    }
+    return numbers.get(length);
+  }
+  return count(length, charNumber);
 }
