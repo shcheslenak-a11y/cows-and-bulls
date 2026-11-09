@@ -1,5 +1,5 @@
 import { QuessReslut } from "./interfaces.js";
-
+import { Config } from "./config.js";
 function createElement(tag: string, attibutes = {}, innerText: string = "") {
   const element = document.createElement(tag);
   for (const [key, value] of Object.entries(attibutes))
@@ -108,46 +108,34 @@ function createLayout(): void {
 }
 
 export class DOMManager {
-  private config: {
-    base: string;
-    length: number;
-    isGameOn: boolean;
-    turns: number;
-    timer: number;
-    history: Array<Array<string>>;
-  };
-  constructor(config: {
-    base: string;
-    length: number;
-    isGameOn: boolean;
-    turns: number;
-    timer: number;
-    history: Array<Array<string>>;
-  }) {
+  private config: Config;
+  constructor(config: Config) {
     this.config = config;
     createLayout();
     this.fillHeader();
     this.fillTable();
   }
-
+  
   gameStart() {
     const base =
       document.getElementById("base")?.getElementsByClassName("selected") || [];
     const length =
       document.getElementById("length")?.getElementsByClassName("selected") ||
       [];
-    console.log(base, length);
     if (!base.length || !length.length) {
       alert("Select Base and Length");
       return false;
     }
-    this.config.base = (base[0] as HTMLElement).dataset.value || "";
-    this.config.length = Number((length[0] as HTMLElement).dataset.value) || 0;
+    this.config.setBase((base[0] as HTMLElement).dataset.value || "");
+    this.config.setLength(
+      Number((length[0] as HTMLElement).dataset.value) || 0,
+    );
     (document.getElementById("guess") as HTMLInputElement).maxLength =
-      this.config.length;
-    this.config.isGameOn = true;
+      this.config.getLength();
+    this.config.setStatus(true);
     document.getElementsByTagName("main")[0]?.classList.remove("hidden");
     this.fillHeader();
+    console.log(this.config);
     return true;
   }
 
@@ -164,7 +152,9 @@ export class DOMManager {
     document.getElementById("bulls-number")!.innerText = String(result.bulls);
     document.getElementById("cows-number")!.innerText = String(result.cows);
     (document.getElementById("guess") as HTMLInputElement)!.value = "";
-    document.getElementById("turns")!.innerText = String(this.config.turns);
+    document.getElementById("turns")!.innerText = String(
+      this.config.getTurns(),
+    );
     this.fillTable();
   }
 
@@ -173,7 +163,7 @@ export class DOMManager {
     table?.replaceChildren();
     table?.append(
       createRow(["#", "GUESS", "BULLS", "COWS"], true),
-      ...this.config.history.map((el: Array<string>) => createRow(el)),
+      ...this.config.getHistory().map((el: Array<string>) => createRow(el)),
     );
   }
 
@@ -199,15 +189,17 @@ export class DOMManager {
         }
       });
 
-    document.getElementById("start")!.innerText = this.config.isGameOn
+    document.getElementById("start")!.innerText = this.config.getStatus()
       ? "Resign"
       : "Start";
   }
 
   createOptions(opt: string): HTMLElement {
-    if (this.config.isGameOn) {
+    if (this.config.getStatus()) {
       const label = createElement("label");
-      label.innerText = this.config[opt as keyof typeof this.config] as string;
+      label.innerText = (
+        opt == "base" ? this.config.getBase() : this.config.getLength()
+      ) as string;
       return label;
     }
     const wrapper = createElement("div", { class: "option-wraper" });

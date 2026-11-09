@@ -5,29 +5,16 @@ import {
   isValidGuess,
 } from "./game-logic.js";
 import { DOMManager } from "./index.js";
+import { Config } from "./config.js";
 
 export class App {
   private dom: DOMManager;
-  private config: {
-    base: string;
-    length: number;
-    isGameOn: boolean;
-    turns: number;
-    timer: number;
-    history: Array<Array<string>>;
-  };
+  private config: Config;
   private secret: string;
   private validator: (char: string) => boolean;
 
   constructor() {
-    this.config = {
-      base: "0",
-      length: 0,
-      isGameOn: false,
-      turns: 0,
-      timer: 0,
-      history: [],
-    };
+    this.config = new Config();
     this.dom = new DOMManager(this.config);
     this.secret = "";
     this.assign();
@@ -36,13 +23,15 @@ export class App {
 
   startGame() {
     if (this.dom.gameStart()) {
-      this.secret = generateSecret(this.config.length, this.config.base);
-      this.validator = createDigitValidator(this.config.base);
+        const base = this.config.getBase();
+      this.secret = generateSecret(this.config.getLength(),base);
+      this.validator = createDigitValidator(base);
     }
   }
 
   guess() {
     const guess = (this.dom.getGuess() || "").toUpperCase();
+    const length = this.config.getLength();
     console.log("G", guess);
     if (guess.length) {
       if (!this.validator(guess.at(-1) || "")) {
@@ -50,34 +39,31 @@ export class App {
         return;
       }
     }
-    if (guess.length == this.config.length) {
-      if (!isValidGuess(guess, guess.length, this.config.base)) {
+    if (guess.length == length) {
+      if (!isValidGuess(guess, guess.length, this.config.getBase())) {
         this.dom.invalidGuess();
         return;
       }
-      if (this.config.history.filter((item) => item[0] == guess).length) {
+      if (this.config.getHistory().filter((item) => item[0] == guess).length) {
         this.dom.invalidGuess();
         return;
       }
-      this.config.turns += 1;
+      this.config.increaseTurns();
       const result = evaluateGuess(this.secret, guess);
-      this.config.history = [
-        ...this.config.history,
-        [guess, String(result.bulls), String(result.cows)],
-      ];
+      this.config.addHistory([guess, String(result.bulls), String(result.cows)]);
       this.dom.show(result);
 
-      if (result.bulls == this.config.length) this.endgame();
+      if (result.bulls == length) this.endgame();
     }
   }
 
   endgame() {
-    this.config.isGameOn = false;
+    this.config.setStatus(false);
     this.secret = "";
   }
 
   resign() {
-    this.config.isGameOn = false;
+    this.config.setStatus(false)
     this.dom.fillHeader();
     this.secret = "";
   }
@@ -85,7 +71,7 @@ export class App {
   assign() {
     const activeElements = this.dom.getActiveElements();
     activeElements.start?.addEventListener("click", () => {
-      if (this.config.isGameOn) this.resign();
+      if (this.config.getStatus()) this.resign();
       else this.startGame();
     });
     activeElements.input?.addEventListener("input", () => {
