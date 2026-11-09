@@ -11,3 +11,15 @@ export function generateSecret(
 export function evaluateGuess(secret: string, guess: string): QuessReslut {
   throw new Error("NotImplemented");
 }
+
+export function createDigitValidator(base: string): (char: string) => boolean {
+  throw new Error("NotImplemented");
+}
+
+export function isValidGuess(
+  guess: string,
+  length: number,
+  base: string,
+): boolean {
+  throw new Error("NotImplemented");
+}
