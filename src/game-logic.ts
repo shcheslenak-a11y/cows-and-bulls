@@ -1,11 +1,67 @@
-import { QuessReslut } from "./interfaces.js";
+import { QuessReslut, BaseData } from "./interfaces.js";
+
+function getBase(base: string): BaseData {
+  switch (base) {
+    case "bin":
+      return { numeric: 2, chars: ["0", "1"] };
+    case "oct":
+      return { numeric: 8, chars: ["0", "1", "2", "3", "4", "5", "6", "7"] };
+    case "dec":
+      return {
+        numeric: 10,
+        chars: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+      };
+    case "hex":
+      return {
+        numeric: 16,
+        chars: [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+        ],
+      };
+    default:
+      throw new Error("Base must be 'bin', 'oct', 'dec' or 'hex'");
+  }
+}
+
+function validateLength(length: number): void {
+  if (typeof length != "number" || length > 6 || length < 2)
+    throw new Error("Length must be a number between 2 and 6");
+}
 
 export function generateSecret(
   length: number,
   base: string,
   random: () => number = Math.random,
 ): string {
-  throw new Error("NotImplemented");
+  const selected = new Set();
+  let secret = "";
+  const baseData = getBase(base);
+  validateLength(length);
+  if (base == "bin" && length != 2)
+    throw new Error("Base 'bin' support only length 2");
+  while (secret.length < length) {
+    const index = Math.floor(random() * baseData.numeric);
+    if (!selected.has(index)) {
+      selected.add(index);
+      secret += baseData.chars[index];
+    }
+  }
+  return secret;
 }
 
 export function evaluateGuess(secret: string, guess: string): QuessReslut {
