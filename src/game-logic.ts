@@ -23,3 +23,7 @@ export function isValidGuess(
 ): boolean {
   throw new Error("NotImplemented");
 }
+
+export function countPossibleSecrets(length: number, base: string): number {
+  throw new Error("NotImplemented");
+}
