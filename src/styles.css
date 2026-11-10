@@ -1,6 +1,11 @@
 body {
     margin: 0 auto;
-    width: 900px;
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    height: 350px;
+    justify-content: space-between;
+    background-color: aqua;
 }
 
 header {
@@ -15,7 +20,8 @@ header {
 
 main {
     display: flex;
-    gap: 20px
+    gap: 20px;
+    width: 500px;
 }
 
 footer{
@@ -26,6 +32,8 @@ footer{
 .flex{
     display: flex;
     justify-content: space-between;
+    gap: 10%;
+    align-items: center;
 }
 
 .option-wraper{
@@ -71,4 +79,57 @@ input {
 
 .hidden {
     display: none !important;
+}
+#base, #length {
+    gap: 1px;
+}
+
+td, th {
+    text-align: center;
+}
+
+dialog > div{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px
+}
+
+#leader-base {
+    display:  flex;
+    justify-content: flex-start;
+    gap: 25px;
+}
+
+#leader-length{
+    display:  flex;
+    justify-content: flex-start;
+    gap: 10px
+}
+
+#modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+
+div:has(> #history) {
+    height: 200px;
+    overflow-x: auto;
+}
+main > div {
+    justify-content: space-around !important;
+}
+
+#err-enter, #err-select{
+    color: red
+}
+
+div:has(> #bulls-number), div:has(> #cows-number){
+    gap: 1px;
+    width: 65px;
+}
+img{
+    height: 24px;
 }
