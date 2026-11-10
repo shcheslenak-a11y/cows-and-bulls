@@ -1,0 +1,135 @@
+body {
+    margin: 0 auto;
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    height: 350px;
+    justify-content: space-between;
+    background-color: aqua;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 500px;
+    margin: 10px auto;
+    gap: 10px;
+}
+
+main {
+    display: flex;
+    gap: 20px;
+    width: 500px;
+}
+
+footer{
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex{
+    display: flex;
+    justify-content: space-between;
+    gap: 10%;
+    align-items: center;
+}
+
+.option-wraper{
+    display: flex;
+    gap: 5px;
+}
+
+.option {
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    
+}
+
+.option.selected {
+    background-color: gray;
+    color:white;
+}
+
+.button {
+    border-radius: 10px;
+    height: 20px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    text-align: center;
+    height: 50px;
+}
+
+.hidden {
+    display: none !important;
+}
+#base, #length {
+    gap: 1px;
+}
+
+td, th {
+    text-align: center;
+}
+
+dialog > div{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px
+}
+
+#leader-base {
+    display:  flex;
+    justify-content: flex-start;
+    gap: 25px;
+}
+
+#leader-length{
+    display:  flex;
+    justify-content: flex-start;
+    gap: 10px
+}
+
+#modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+
+div:has(> #history) {
+    height: 200px;
+    overflow-x: auto;
+}
+main > div {
+    justify-content: space-around !important;
+}
+
+#err-enter, #err-select{
+    color: red
+}
+
+div:has(> #bulls-number), div:has(> #cows-number){
+    gap: 1px;
+    width: 65px;
+}
+img{
+    height: 24px;
+}

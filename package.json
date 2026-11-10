@@ -1,0 +1,54 @@
+{
+  "name": "cows-and-bulls",
+  "version": "1.0.0",
+  "description": "Task: [github.com/rolling-scopes-school/tasks/blob/master/fullstack-engineering/tasks/bulls-and-cows/README.md](https://github.com/rolling-scopes-school/tasks/blob/master/fullstack-engineering/tasks/bulls-and-cows/README.md)",
+  "homepage": "https://github.com/shcheslenak-a11y/cows-and-bulls#readme",
+  "bugs": {
+    "url": "https://github.com/shcheslenak-a11y/cows-and-bulls/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shcheslenak-a11y/cows-and-bulls.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "format": "npx eslint . --ext .ts --fix",
+    "lint": "npx eslint . --ext .ts"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "*.(ts|tsx)": [
+      "npm run format",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/jest": "^30.0.0",
+    "@types/seedrandom": "^3.0.8",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
+    "globals": "^17.14.0",
+    "jest": "^30.5.2",
+    "jiti": "^2.7.0",
+    "lint-staged": "^17.6.0",
+    "prettier": "3.2.5",
+    "seedrandom": "^3.0.5",
+    "ts-jest": "^29.4.15",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1"
+  }
+}
