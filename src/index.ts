@@ -85,13 +85,13 @@ function createLayout(): void {
   const bullsCowsCounter = createElement("div", { class: "flex-column" });
   const bullsCounter = createElement("div", { class: "flex" });
   bullsCounter.append(
-    createElement("img", { src: "../assets/bull.png", alt: "Bulls" }),
+    createElement("img", { src: "assets/bull.png", alt: "Bulls" }),
     createElement("label", {}, ":"),
     createElement("label", { id: "bulls-number", class: "flex" }, "0"),
   );
   const cowsCounter = createElement("div", { class: "flex" });
   cowsCounter.append(
-    createElement("img", { src: "../assets/cow.png", alt: "Cows " }),
+    createElement("img", { src: "assets/cow.png", alt: "Cows " }),
     createElement("label", {}, ":"),
     createElement("label", { id: "cows-number", class: "flex" }, "0"),
   );
@@ -113,7 +113,7 @@ function createLayout(): void {
     href: "https://rs.school/courses/javascript",
   });
   const courseImg = createElement("img", {
-    src: "../assets/logo.svg",
+    src: "assets/logo.svg",
     alt: "RSSchool/Full-Stack JS",
   });
   course.append(courseImg);
@@ -121,7 +121,7 @@ function createLayout(): void {
     href: "https://github.com/shcheslenak-a11y",
   });
   const githubImg = createElement("img", {
-    src: "../assets/github.png",
+    src: "assets/github.png",
     alt: "Github",
   });
   github.append(githubImg);
