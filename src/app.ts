@@ -7,7 +7,7 @@ import {
 import { DOMManager } from "./index.js";
 import { Config } from "./config.js";
 
-let storage = window.localStorage;
+const storage = window.localStorage;
 
 export class App {
   private dom: DOMManager;
@@ -22,12 +22,12 @@ export class App {
     this.secret = "";
     this.assign();
     this.validator = () => false;
-    this.isGameActive = false
+    this.isGameActive = false;
   }
 
   startGame() {
     if (this.dom.gameStart()) {
-        this.isGameActive = true
+      this.isGameActive = true;
       const base = this.config.getBase();
       this.secret = generateSecret(this.config.getLength(), base);
       this.validator = createDigitValidator(base);
@@ -35,7 +35,7 @@ export class App {
   }
 
   guess() {
-    if (!this.config.getStatus()) return
+    if (!this.config.getStatus()) return;
     const guess = (this.dom.getGuess() || "").toUpperCase();
     const length = this.config.getLength();
     console.log("G", guess);
@@ -47,11 +47,11 @@ export class App {
     }
     if (guess.length == length) {
       if (!isValidGuess(guess, guess.length, this.config.getBase())) {
-        this.dom.invalidGuess();
+        this.dom.invalidGuess(guess, false);
         return;
       }
       if (this.config.getHistory().filter((item) => item[0] == guess).length) {
-        this.dom.invalidGuess();
+        this.dom.invalidGuess(guess);
         return;
       }
       this.config.increaseTurns();
@@ -68,8 +68,8 @@ export class App {
   }
 
   endgame() {
-    this.addLeader()
-    this.dom.showWin()
+    this.addLeader();
+    this.dom.showWin();
     this.config.setStatus(false);
     this.secret = "";
   }
@@ -82,38 +82,50 @@ export class App {
     this.isGameActive = false;
   }
 
-  getLeaders(){
-    return JSON.parse(storage.getItem("leaders") || '{"bin": {"2":[]},"oct": {"2":[], "3": [], "4":[], "5":[], "6": []},"dec": {"2":[], "3": [], "4":[], "5":[], "6": []},"hex": {"2":[], "3": [], "4":[], "5":[], "6": []}}')
+  getLeaders(): { [key: string]: { [key: string]: Array<Array<string>> } } {
+    return JSON.parse(
+      storage.getItem("leaders") ||
+        '{"bin": {"2":[]},"oct": {"2":[], "3": [], "4":[], "5":[], "6": []},"dec": {"2":[], "3": [], "4":[], "5":[], "6": []},"hex": {"2":[], "3": [], "4":[], "5":[], "6": []}}',
+    );
   }
 
-  addLeader(){
-    let today = new Date();
-    let dd = String(today.getDate()).padStart(2, '0');
-    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    let yyyy = today.getFullYear();
-    let currentDate = `${dd}.${mm}.${yyyy}`
-    let leaders = this.getLeaders()
-    let leader = leaders[this.config.getBase()][String(this.config.getLength())]
-    let i=0;
-    for(; i<leader.length; i++){
-        if(this.config.getTurns() < Number(leader[i][0])){
-            console.log("<")
-            break
-        }
-        if(this.config.getTurns() == Number(leader[i][0]) && this.config.getTime() < Number(leader[i][1])){
-            console.log("=")
-            break
-        }
+  addLeader() {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    const yyyy = today.getFullYear();
+    const currentDate = `${dd}.${mm}.${yyyy}`;
+    const leaders = this.getLeaders();
+    const leader = (
+      leaders[this.config.getBase()] as { [key: string]: Array<Array<string>> }
+    )[String(this.config.getLength())] as Array<Array<string>>;
+    let i;
+    for (i = 0; i < leader.length; i++) {
+      if (this.config.getTurns() < Number((leader[i] || [])[0])) {
+        console.log("<");
+        break;
+      }
+      if (
+        this.config.getTurns() == Number((leader[i] || [])[0]) &&
+        this.config.getTime() < Number((leader[i] || [])[1])
+      ) {
+        console.log("=");
+        break;
+      }
     }
-    
-    leader.splice(i, 0, [`${this.config.getTurns()}`,`${this.config.getTime()}`, currentDate])
+
+    leader.splice(i, 0, [
+      `${this.config.getTurns()}`,
+      `${this.config.getTime()}`,
+      currentDate,
+    ]);
     while (leader.length > 10) leader.pop();
-    storage.setItem("leaders",  JSON.stringify(leaders))
+    storage.setItem("leaders", JSON.stringify(leaders));
   }
 
   showLeaders() {
-    const leaders = this.getLeaders()
-    this.dom.showLeaders(leaders)
+    const leaders = this.getLeaders();
+    this.dom.showLeaders(leaders);
   }
 
   assign() {

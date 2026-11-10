@@ -46,11 +46,20 @@ function createLayout(): void {
   const base = createElement("div", { id: "base", class: "flex" });
   const length = createElement("div", { id: "length", class: "flex" });
   options.append(base, length);
-  const buttons = createElement("div", {class:'flex'})
+  const errMesage = createElement(
+    "label",
+    { id: "err-select", class: "hidden" },
+    "Please select base and length",
+  );
+  const buttons = createElement("div", { class: "flex" });
   const startButton = createElement("div", { id: "start", class: "button" });
-  const leaderButton = createElement("div", { id: "leaders", class: "button" }, 'Leaders');
-  buttons.append(startButton, leaderButton)
-  header.append(options, buttons);
+  const leaderButton = createElement(
+    "div",
+    { id: "leaders", class: "button" },
+    "Leaders",
+  );
+  buttons.append(startButton, leaderButton);
+  header.append(options, errMesage, buttons);
 
   //main
   const main = createElement("main", { class: "flex-column hidden" });
@@ -68,7 +77,7 @@ function createLayout(): void {
   counter.append(turns, timer);
 
   const field = createElement("div", { class: "flex" });
-
+  const div = createElement("div", { class: "flex-column" });
   const playground = createElement("div", { class: "flex" });
   const input = createElement("input", {
     id: "guess",
@@ -86,9 +95,12 @@ function createLayout(): void {
   );
   bullsCowsCounter.append(bullsCounter, cowsCounter);
   playground.append(input, bullsCowsCounter);
-
+  div.append(
+    playground,
+    createElement("label", { id: "err-enter", class: "hidden" }),
+  );
   const history = createElement("table", { id: "history" });
-  field.append(playground, history);
+  field.append(div, history);
   main.append(counter, field);
 
   //footer
@@ -108,12 +120,12 @@ function createLayout(): void {
   github.append(githubImg);
   footer.append(course, "2026", github);
 
-  const modal = createElement('dialog', {id: 'modal'})
+  const modal = createElement("dialog", { id: "modal" });
   modal.append(
-    createElement('h2',{id: 'modal-header'}),
-    createElement('div', {id:'modal-content'}),
-    createElement('div', {id:'close', class:'button'}, 'Close')
-  )
+    createElement("h2", { id: "modal-header" }),
+    createElement("div", { id: "modal-content" }),
+    createElement("div", { id: "close", class: "button" }, "Close"),
+  );
   document.body.append(header, main, footer, modal);
 }
 
@@ -124,9 +136,9 @@ export class DOMManager {
     createLayout();
     this.fillHeader();
     this.fillTable();
-    document.getElementById("close")!.addEventListener('click', ()=>{
-        this.close()
-    })
+    document.getElementById("close")!.addEventListener("click", () => {
+      this.close();
+    });
   }
 
   timer() {
@@ -146,7 +158,7 @@ export class DOMManager {
       document.getElementById("length")?.getElementsByClassName("selected") ||
       [];
     if (!base.length || !length.length) {
-      alert("Select Base and Length");
+      document.getElementById("err-select")?.classList.remove("hidden");
       return false;
     }
     this.config.setBase((base[0] as HTMLElement).dataset.value || "");
@@ -156,14 +168,16 @@ export class DOMManager {
     (document.getElementById("guess") as HTMLInputElement).maxLength =
       this.config.getLength();
     this.config.setStatus(true);
-    this.fillTable()
+    this.fillTable();
     document.getElementsByTagName("main")[0]?.classList.remove("hidden");
     this.fillHeader();
     this.timer();
+    document.getElementById("err-select")?.classList.add("hidden");
     return true;
   }
 
   getGuess() {
+    document.getElementById("err-enter")!.classList.add("hidden");
     return (document.getElementById("guess") as HTMLInputElement).value;
   }
 
@@ -187,7 +201,11 @@ export class DOMManager {
     table?.replaceChildren();
     table?.append(
       createRow(["#", "GUESS", "BULLS", "COWS"], true),
-      ...this.config.getHistory().map((el: Array<string>,index:number) => createRow([String(index + 1)].concat(el))),
+      ...this.config
+        .getHistory()
+        .map((el: Array<string>, index: number) =>
+          createRow([String(index + 1)].concat(el)),
+        ),
     );
   }
 
@@ -204,7 +222,9 @@ export class DOMManager {
     const labelLength = createElement("label");
     labelLength.innerText = "Length: ";
     length!.append(labelLength, this.createOptions("length"));
-    for (const opt of document.getElementsByTagName("header")[0]!.getElementsByClassName("option"))
+    for (const opt of document
+      .getElementsByTagName("header")[0]!
+      .getElementsByClassName("option"))
       opt.addEventListener("click", () => {
         if (!opt.classList.contains("selected")) {
           for (const child of opt.parentNode!.children)
@@ -243,52 +263,62 @@ export class DOMManager {
     return {
       start: document.getElementById("start"),
       input: document.getElementById("guess"),
-      leaders: document.getElementById('leaders')
+      leaders: document.getElementById("leaders"),
     };
   }
 
-  invalidGuess() {
+  invalidGuess(guess: string, err: boolean = true) {
+    let reasonStr;
+    if (err) reasonStr = `Guess '${guess}' already tried`;
+    else reasonStr = `invalid guess '${guess}'`;
+    document.getElementById("err-enter")!.innerText = reasonStr;
+    document.getElementById("err-enter")!.classList.remove("hidden");
     (document.getElementById("guess") as HTMLInputElement)!.value = "";
   }
 
   reset() {
     document.getElementsByTagName("main")[0]?.classList.add("hidden");
     document.getElementById("timer")!.innerText = "0";
+    document.getElementById("turns")!.innerText = "0";
+    document.getElementById("bulls-number")!.innerText = "0";
+    document.getElementById("cows-number")!.innerText = "0";
     this.fillHeader();
-    
   }
 
-  open(data:{header: string, content: Array<HTMLElement>}){
+  open(data: { header: string; content: Array<HTMLElement> }) {
     document.getElementById("modal-header")!.innerText = data.header;
     document.getElementById("modal-content")?.append(...data.content);
-    (document.getElementById('modal') as HTMLDialogElement).showModal()
+    (document.getElementById("modal") as HTMLDialogElement).showModal();
   }
 
   close() {
     document.getElementById("modal-content")?.replaceChildren();
-    (document.getElementById('modal') as HTMLDialogElement).close()
+    (document.getElementById("modal") as HTMLDialogElement).close();
   }
 
-  showWin(){
+  showWin() {
     const content = [
-        createElement('label', {}, `Time: ${this.config.getTime()}`),
-        createElement('label', {}, `Turns: ${this.config.getTurns()}`)
-    ] 
+      createElement("label", {}, `Time: ${this.config.getTime()}`),
+      createElement("label", {}, `Turns: ${this.config.getTurns()}`),
+    ];
     this.open({
-        header: 'Congratulations',
-        content: content
-    })
+      header: "Congratulations",
+      content: content,
+    });
   }
 
-  showLeaders(leaders:{[key: string]: {[key: string]: Array<string>}}) {
-    const base = createElement('div', {id:"leader-base"})
+  showLeaders(leaders: {
+    [key: string]: { [key: string]: Array<Array<string>> };
+  }) {
+    const base = createElement("div", { id: "leader-base" });
     const wrapperBase = createElement("div", { class: "option-wraper" });
     wrapperBase.append(
-        createElement(
-          "div",
-          { "data-value": 'all', class: "option selected" },
-          'All'),
-      ...options['base']!.map((el: Array<string>) => {
+      createElement(
+        "div",
+        { "data-value": "all", class: "option selected" },
+        "All",
+      ),
+      ...options["base"]!.map((el: Array<string>) => {
         return createElement(
           "div",
           { "data-value": el[0], class: "option" },
@@ -296,19 +326,17 @@ export class DOMManager {
         );
       }),
     );
-    base.append(
-        createElement("label", {}, "Base:"),
-        wrapperBase
-    )
+    base.append(createElement("label", {}, "Base:"), wrapperBase);
 
-    const length = createElement('div', {id:"leader-length"})
+    const length = createElement("div", { id: "leader-length" });
     const wrapperLength = createElement("div", { class: "option-wraper" });
     wrapperLength.append(
-        createElement(
-          "div",
-          { "data-value": 'all', class: "option selected" },
-          'All'),
-      ...options['length']!.map((el: Array<string>) => {
+      createElement(
+        "div",
+        { "data-value": "all", class: "option selected" },
+        "All",
+      ),
+      ...options["length"]!.map((el: Array<string>) => {
         return createElement(
           "div",
           { "data-value": el[0], class: "option" },
@@ -316,63 +344,72 @@ export class DOMManager {
         );
       }),
     );
-    length.append(
-        createElement("label", {}, "Length:"),
-        wrapperLength
-    )
+    length.append(createElement("label", {}, "Length:"), wrapperLength);
 
-    const table = createElement('table', {id:"leader-table"})
-    const content = [base, length, table]
+    const table = createElement("table", { id: "leader-table" });
+    const content = [base, length, table];
     this.open({
-        header: "Leaders",
-        content: content
-    })
-    for (const opt of document.getElementById("modal-content")!.getElementsByClassName("option"))
+      header: "Leaders",
+      content: content,
+    });
+    for (const opt of document
+      .getElementById("modal-content")!
+      .getElementsByClassName("option"))
       opt.addEventListener("click", () => {
         if (!opt.classList.contains("selected")) {
           for (const child of opt.parentNode!.children)
             child.classList.remove("selected");
           opt.classList.add("selected");
-          this.fillLeaders(leaders)
+          this.fillLeaders(leaders);
         }
       });
-    this.fillLeaders(leaders)
+    this.fillLeaders(leaders);
   }
 
-  fillLeaders(leaders:{[key: string]: {[key: string]: Array<string>}}) {
-    console.log(leaders)
-    const base = (document.getElementById('leader-base')?.getElementsByClassName('selected')[0] as HTMLElement).dataset.value
-    const length = (document.getElementById('leader-length')?.getElementsByClassName('selected')[0] as HTMLElement).dataset.value
-    const table = document.getElementById('leader-table')as HTMLElement
-    let leaderList:Array<Array<string>> = []
-    const baseFiltered = Object.entries(leaders).filter(([key, value]) => {
-        if (base != 'all')
-            return key == base
-        else
-            return true;
-    })
-    for (const [keyBase, value] of baseFiltered){
-        Object.entries(value).map(([keyLength, records]) => {
-            if (length != keyLength && length != 'all' )
-                return
-            (records || []).forEach(record => {
-                let shownRecord = [...record]
-                if(base == 'all') shownRecord.push(keyBase)
-                if(length == 'all') shownRecord.push(keyLength)
-                leaderList.push(shownRecord)
-            });
-            
-        })
+  fillLeaders(leaders: {
+    [key: string]: { [key: string]: Array<Array<string>> };
+  }) {
+    console.log(leaders);
+    const base = (
+      document
+        .getElementById("leader-base")
+        ?.getElementsByClassName("selected")[0] as HTMLElement
+    ).dataset.value;
+    const length = (
+      document
+        .getElementById("leader-length")
+        ?.getElementsByClassName("selected")[0] as HTMLElement
+    ).dataset.value;
+    const table = document.getElementById("leader-table") as HTMLElement;
+    let leaderList: Array<Array<string>> = [];
+    const baseFiltered = Object.entries(leaders).filter(([key]) => {
+      if (base != "all") return key == base;
+      else return true;
+    });
+    for (const [keyBase, value] of baseFiltered) {
+      Object.entries(value).map(([keyLength, records]) => {
+        if (length != keyLength && length != "all") return;
+        (records || []).forEach((record) => {
+          const shownRecord = [...record];
+          if (base == "all") shownRecord.push(keyBase);
+          if (length == "all") shownRecord.push(keyLength);
+          leaderList.push(shownRecord);
+        });
+      });
     }
-    leaderList.sort((a, b) => Number(a[0]) - Number(b[0]) || Number(a[1]) - Number(b[2]))
-    leaderList = leaderList.slice(0, 10)
+    leaderList.sort(
+      (a, b) => Number(a[0]) - Number(b[0]) || Number(a[1]) - Number(b[2]),
+    );
+    leaderList = leaderList.slice(0, 10);
     table?.replaceChildren();
-    let header = ["#", "turns", "time", "date"];
-    if(base == 'all') header.push("Base")
-    if(length == 'all') header.push("Length")
+    const header = ["#", "turns", "time", "date"];
+    if (base == "all") header.push("Base");
+    if (length == "all") header.push("Length");
     table?.append(
       createRow(header, true),
-      ...leaderList.map((el: Array<string>, index:number) => createRow([String(index + 1)].concat(el))),
+      ...leaderList.map((el: Array<string>, index: number) =>
+        createRow([String(index + 1)].concat(el)),
+      ),
     );
   }
 }
