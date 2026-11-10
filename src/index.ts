@@ -45,11 +45,10 @@ function createLayout(): void {
   const base = createElement("div", { id: "base", class: "flex" });
   const length = createElement("div", { id: "length", class: "flex" });
   options.append(base, length);
-  const errMesage = createElement(
-    "label",
-    { id: "err-select", class: "hidden" },
-    "Please select base and length",
-  );
+  const errMesage = createElement("label", {
+    id: "err-select",
+    class: "hidden",
+  });
   const buttons = createElement("div", { class: "flex" });
   const startButton = createElement("div", { id: "start", class: "button" });
   const leaderButton = createElement(
@@ -157,6 +156,17 @@ export class DOMManager {
       document.getElementById("length")?.getElementsByClassName("selected") ||
       [];
     if (!base.length || !length.length) {
+      document.getElementById("err-select")!.innerText =
+        "Please select base and length";
+      document.getElementById("err-select")?.classList.remove("hidden");
+      return false;
+    }
+    if (
+      (base[0] as HTMLElement).dataset.value == "bin" &&
+      (length[0] as HTMLElement).dataset.value != "2"
+    ) {
+      document.getElementById("err-select")!.innerText =
+        "Binary base support only length 2";
       document.getElementById("err-select")?.classList.remove("hidden");
       return false;
     }
