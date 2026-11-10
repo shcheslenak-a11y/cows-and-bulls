@@ -38,7 +38,6 @@ export class App {
     if (!this.config.getStatus()) return;
     const guess = (this.dom.getGuess() || "").toUpperCase();
     const length = this.config.getLength();
-    console.log("G", guess);
     if (guess.length) {
       if (!this.validator(guess.at(-1) || "")) {
         this.dom.removeLast();
@@ -101,17 +100,12 @@ export class App {
     )[String(this.config.getLength())] as Array<Array<string>>;
     let i;
     for (i = 0; i < leader.length; i++) {
-      if (this.config.getTurns() < Number((leader[i] || [])[0])) {
-        console.log("<");
-        break;
-      }
+      if (this.config.getTurns() < Number((leader[i] || [])[0])) break;
       if (
         this.config.getTurns() == Number((leader[i] || [])[0]) &&
         this.config.getTime() < Number((leader[i] || [])[1])
-      ) {
-        console.log("=");
+      )
         break;
-      }
     }
 
     leader.splice(i, 0, [

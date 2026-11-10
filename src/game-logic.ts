@@ -76,7 +76,6 @@ export function evaluateGuess(secret: string, guess: string): QuessReslut {
     },
     { cows: 0, bulls: 0 },
   );
-  console.log(secret, guess, res);
   return res;
 }
 

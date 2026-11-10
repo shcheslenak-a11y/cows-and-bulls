@@ -29,7 +29,6 @@ function createRow(
   header: boolean = false,
 ): HTMLElement {
   const row = createElement("tr");
-  console.log(rowdata);
   row.append(
     ...rowdata.map((el: string) => {
       const item = createElement(header ? "th" : "td");
@@ -369,7 +368,6 @@ export class DOMManager {
   fillLeaders(leaders: {
     [key: string]: { [key: string]: Array<Array<string>> };
   }) {
-    console.log(leaders);
     const base = (
       document
         .getElementById("leader-base")

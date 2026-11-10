@@ -1,7 +1,7 @@
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default defineConfig([
@@ -16,6 +16,10 @@ export default defineConfig([
   {
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
+      "no-var": "error",
+      "no-console": "error",
+      "prefer-const": "error",
     },
   },
+  globalIgnores(["dist/**/*"]),
 ]);
