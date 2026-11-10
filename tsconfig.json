@@ -42,7 +42,7 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./build"
   },
   "include": [
     "src/**/*"
