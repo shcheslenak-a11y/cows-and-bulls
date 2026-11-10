@@ -85,10 +85,14 @@ function createLayout(): void {
   const bullsCowsCounter = createElement("div", { class: "flex-column" });
   const bullsCounter = createElement("div", { class: "flex" });
   bullsCounter.append(
+    createElement("img", { src: "../assets/bull.png", alt: "Bulls" }),
+    createElement("label", {}, ":"),
     createElement("label", { id: "bulls-number", class: "flex" }, "0"),
   );
   const cowsCounter = createElement("div", { class: "flex" });
   cowsCounter.append(
+    createElement("img", { src: "../assets/cow.png", alt: "Cows " }),
+    createElement("label", {}, ":"),
     createElement("label", { id: "cows-number", class: "flex" }, "0"),
   );
   bullsCowsCounter.append(bullsCounter, cowsCounter);
@@ -98,7 +102,9 @@ function createLayout(): void {
     createElement("label", { id: "err-enter", class: "hidden" }),
   );
   const history = createElement("table", { id: "history" });
-  field.append(div, history);
+  const historyWrapper = createElement("div");
+  historyWrapper.append(history);
+  field.append(div, historyWrapper);
   main.append(counter, field);
 
   //footer
@@ -107,23 +113,29 @@ function createLayout(): void {
     href: "https://rs.school/courses/javascript",
   });
   const courseImg = createElement("img", {
-    src: "",
-    alt: "RSSchool/Full-Stacj JS",
+    src: "../assets/logo.svg",
+    alt: "RSSchool/Full-Stack JS",
   });
   course.append(courseImg);
   const github = createElement("a", {
     href: "https://github.com/shcheslenak-a11y",
   });
-  const githubImg = createElement("img", { src: "", alt: "Github" });
+  const githubImg = createElement("img", {
+    src: "../assets/github.png",
+    alt: "Github",
+  });
   github.append(githubImg);
   footer.append(course, "2026", github);
 
   const modal = createElement("dialog", { id: "modal" });
-  modal.append(
+  const modalInner = createElement("div");
+  modalInner.append(
     createElement("h2", { id: "modal-header" }),
     createElement("div", { id: "modal-content" }),
     createElement("div", { id: "close", class: "button" }, "Close"),
   );
+  modal.append(modalInner);
+
   document.body.append(header, main, footer, modal);
 }
 
@@ -181,6 +193,8 @@ export class DOMManager {
     document.getElementsByTagName("main")[0]?.classList.remove("hidden");
     this.fillHeader();
     this.timer();
+    document.getElementById("err-enter")?.classList.add("hidden");
+    (document.getElementById("guess") as HTMLInputElement).value = "";
     document.getElementById("err-select")?.classList.add("hidden");
     return true;
   }
@@ -296,6 +310,7 @@ export class DOMManager {
 
   open(data: { header: string; content: Array<HTMLElement> }) {
     document.getElementById("modal-header")!.innerText = data.header;
+    document.getElementById("modal-content")?.replaceChildren();
     document.getElementById("modal-content")?.append(...data.content);
     (document.getElementById("modal") as HTMLDialogElement).showModal();
   }
